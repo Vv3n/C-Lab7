@@ -37,16 +37,14 @@ int main() {
     NewList listB;
     LinkList *listC;
 
-    listA.InsNode("one", 1, 'A', 1.1);
-    listB.InsNode("two", 2, 'B', 2.2);
-    listA.InsNode("three", 3, 'C', 3.3);
-
+    listA.InsNode( "one", 1, 'A', 1.1) ;
+    listB.InsNode( "two", 2, 'B', 2.2 );
+    listA.InsNode( "three", 3, 'C', 3.3 );
     listB.LinkList::ShowNode();
 
-    listB.InsNode("four", 4, 'D', 4.4);
-    listB.InsNode("five", 5, 'E', 5.5);
-    listB.InsNode("six", 6, 'F', 6.6);
-
+    listB.InsNode( "four", 4, 'D', 4.4 );
+    listB.InsNode( "five", 5, 'E', 5.5 );
+    listB.InsNode( "six", 6, 'F', 6.6 );
     listB.DelNode();
     listB.ShowNode();
 
