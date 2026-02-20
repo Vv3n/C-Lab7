@@ -1,133 +1,122 @@
-#include <iostream>
-#include <cstring>
-#include <iomanip>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct studentNode {
     char name[20];
     int age;
     char sex;
     float gpa;
-    studentNode *next;
+    struct studentNode *next;
 };
 
-class LinkList {
-protected:
-    studentNode *start, *now;
+void InsNode(struct studentNode **start, struct studentNode **now,
+             char n[], int a, char s, float g)
+{
+    struct studentNode *newNode =
+        (struct studentNode*)malloc(sizeof(struct studentNode));
 
-public:
-    LinkList();
-    ~LinkList();
+    strcpy(newNode->name, n);
+    newNode->age = a;
+    newNode->sex = s;
+    newNode->gpa = g;
+    newNode->next = NULL;
 
-    void InsNode(char n[], int a, char s, float g);
-    void GoNext();
-    void DelNode();
-    virtual void ShowNode();
-};
+    if (*start == NULL) {
+        *start = *now = newNode;
+    } else {
+        newNode->next = *start;
+        *start = newNode;
+    }
+}
 
-class NewList : public LinkList {
-public:
-    void GoFirst();
-    virtual void ShowNode();
-};
+void InsertNode(struct studentNode **start, struct studentNode **now,
+                char n[], int a, char s, float g)
+{
+    struct studentNode *newNode =
+        (struct studentNode*)malloc(sizeof(struct studentNode));
 
-int main() {
+    strcpy(newNode->name, n);
+    newNode->age = a;
+    newNode->sex = s;
+    newNode->gpa = g;
+    newNode->next = NULL;
 
-    LinkList listA;
-    NewList listB;
-    LinkList *listC;
+    if (*start == NULL) {
+        *start = *now = newNode;
+    } else {
+        newNode->next = *start;
+        *start = newNode;
+    }
+}
 
-    listA.InsNode("one", 1, 'A', 1.1);
-    listB.InsNode("two", 2, 'B', 2.2);
-    listA.InsNode("three", 3, 'C', 3.3);
+void GoNext(struct studentNode **now)
+{
+    if (*now != NULL && (*now)->next != NULL)
+        *now = (*now)->next;
+}
 
-    listB.ShowNode();
+void DelNode(struct studentNode **start, struct studentNode **now)
+{
+    struct studentNode *temp, *walk;
 
-    listB.InsNode("four", 4, 'D', 4.4);
-    listB.InsNode("five", 5, 'E', 5.5);
-    listB.InsNode("six", 6, 'F', 6.6);
+    if (*start == NULL) return;
 
-    listB.DelNode();
-    listB.ShowNode();
+    if (*start == *now) {
+        temp = *start;
+        *start = (*start)->next;
+        *now = *start;
+        free(temp);
+    } else {
+        walk = *start;
+        while (walk->next != *now)
+            walk = walk->next;
 
-    listC = &listA;
-    listC->GoNext();
-    listC->ShowNode();
+        temp = *now;
+        walk->next = (*now)->next;
+        *now = walk->next;
+        free(temp);
+    }
+}
 
-    listC = &listB;
-    listC->ShowNode();
+void ShowNode(struct studentNode *now)
+{
+    if (now != NULL)
+        printf("%s %d %c %.2f\n",
+               now->name, now->age,
+               now->sex, now->gpa);
+}
+
+
+int main()
+{
+    struct studentNode *listA_start=NULL, *listA_now=NULL;
+    struct studentNode *listB_start=NULL, *listB_now=NULL;
+    struct studentNode *listC_start=NULL, *listC_now=NULL;
+
+    InsNode(&listA_start,&listA_now,"one",1,'A',1.1);
+    InsNode(&listA_start,&listA_now,"two",2,'B',2.2);
+    InsNode(&listA_start,&listA_now,"three",3,'C',3.3);
+    GoNext(&listA_now);
+    ShowNode(listA_now);
+
+    InsertNode(&listB_start,&listB_now,"four",4,'D',4.4);
+    InsertNode(&listB_start,&listB_now,"five",5,'E',5.5);
+    InsertNode(&listB_start,&listB_now,"six",6,'F',6.6);
+    GoNext(&listB_now);
+    DelNode(&listB_start,&listB_now);
+    printf("%s %s\n", listB_start->name,
+                      listB_start->next->name);
+
+    listC_start = listA_start;
+    listC_now   = listC_start;
+    GoNext(&listC_now);
+    ShowNode(listC_now);
+
+    listC_start = listB_start;
+    listC_now   = listC_start;
+    printf("%s %s\n", listC_start->name,
+                      listC_start->next->name);
 
     return 0;
-}
-
-LinkList::LinkList() {
-    start = NULL;
-    now = NULL;
-}
-
-LinkList::~LinkList() {
-    studentNode *temp;
-    while (start != NULL) {
-        temp = start;
-        start = start->next;
-        delete temp;
-    }
-}
-
-void LinkList::InsNode(char n[], int a, char s, float g) {
-    studentNode *p = new studentNode;
-
-    strcpy(p->name, n);
-    p->age = a;
-    p->sex = s;
-    p->gpa = g;
-
-    p->next = start;
-    start = p;
-    now = start;
-}
-
-void LinkList::GoNext() {
-    if (now != NULL)
-        now = now->next;
-}
-
-void LinkList::DelNode() {
-    if (start == NULL || start->next == NULL)
-        return;
-
-    studentNode *temp = start->next;
-    start->next = temp->next;
-    delete temp;
-
-    now = start;
-}
-
-void LinkList::ShowNode() {
-    if (now != NULL) {
-        cout << now->name << " "
-             << now->age << " "
-             << now->sex << " "
-             << fixed << setprecision(2)
-             << now->gpa << endl;
-    }
-}
-
-void NewList::GoFirst() {
-    now = start;
-}
-
-void NewList::ShowNode() {
-
-    if (start == NULL)
-        return;
-
-    if (start->next == NULL) {
-        now = start;
-        LinkList::ShowNode();
-        return;
-    }
-
-    cout << start->name << " "
-         << start->next->name << endl;
 }
