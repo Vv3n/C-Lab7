@@ -37,14 +37,16 @@ int main() {
     NewList listB;
     LinkList *listC;
 
-    listA.InsNode( "one", 1, 'A', 1.1) ;
-    listB.InsNode( "two", 2, 'B', 2.2 );
-    listA.InsNode( "three", 3, 'C', 3.3 );
-    listB.LinkList::ShowNode();
+    listA.InsNode("one", 1, 'A', 1.1);
+    listB.InsNode("two", 2, 'B', 2.2);
+    listA.InsNode("three", 3, 'C', 3.3);
 
-    listB.InsNode( "four", 4, 'D', 4.4 );
-    listB.InsNode( "five", 5, 'E', 5.5 );
-    listB.InsNode( "six", 6, 'F', 6.6 );
+    listB.ShowNode();
+
+    listB.InsNode("four", 4, 'D', 4.4);
+    listB.InsNode("five", 5, 'E', 5.5);
+    listB.InsNode("six", 6, 'F', 6.6);
+
     listB.DelNode();
     listB.ShowNode();
 
@@ -91,12 +93,14 @@ void LinkList::GoNext() {
 }
 
 void LinkList::DelNode() {
-    if (now == NULL || now->next == NULL)
+    if (start == NULL || start->next == NULL)
         return;
 
-    studentNode *temp = now->next;
-    now->next = temp->next;
+    studentNode *temp = start->next;
+    start->next = temp->next;
     delete temp;
+
+    now = start;
 }
 
 void LinkList::ShowNode() {
@@ -114,14 +118,16 @@ void NewList::GoFirst() {
 }
 
 void NewList::ShowNode() {
-    studentNode *p = start;
-    int count = 0;
 
-    while (p != NULL && count < 2) {
-        cout << p->name;
-        if (count == 0) cout << " ";
-        p = p->next;
-        count++;
+    if (start == NULL)
+        return;
+
+    if (start->next == NULL) {
+        now = start;
+        LinkList::ShowNode();
+        return;
     }
-    cout << endl;
+
+    cout << start->name << " "
+         << start->next->name << endl;
 }
